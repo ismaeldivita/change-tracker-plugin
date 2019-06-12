@@ -1,0 +1,27 @@
+plugins {
+    id "com.gradle.plugin-publish" version "0.10.1"
+    id "kotlin"
+}
+
+version = "0.1.0"
+group = "com.ismaeldivita.changetracker"
+
+pluginBundle {
+    website = 'https://github.com/ismaeldivita/change-tracker'
+    vcsUrl = 'https://github.com/ismaeldivita/change-tracker'
+    description = 'A gradle plugin to track changes on modules and his dependents'
+    tags = ['module', 'test']
+
+    plugins {
+        changeTracker {
+            id = 'com.ismaeldivita.changetracker'
+            displayName = 'Change Tracker Plugin'
+        }
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.40"
+    implementation "org.eclipse.jgit:org.eclipse.jgit:5.4.0.201906121030-r"
+}
