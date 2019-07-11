@@ -1,6 +1,7 @@
 package com.ismaeldivita.changetracker
 
 import com.ismaeldivita.changetracker.util.*
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -12,7 +13,10 @@ class ChangeTrackerPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-        require(project.isRoot) { "#MESSAGE_ONLY_APPLY_ON_ROOT" }
+        if (!project.isRoot) {
+            throw GradleException("change-tracker plugin must be applied only on the root project")
+        }
+
         project.evaluationDependsOnChildren()
 
         project.afterEvaluate {
