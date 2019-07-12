@@ -8,30 +8,28 @@ import org.gradle.api.Task
 
 class ChangeTrackerPlugin : Plugin<Project> {
 
-    companion object {
-        private const val CONFIG_TASKS = "changedModules_tasks"
-    }
-
     override fun apply(project: Project) {
         if (!project.isRoot) {
             throw GradleException("change-tracker plugin must be applied only on the root project")
         }
 
+        project.extensions.create(CHANGE_TRACKER_EXTENSION, ChangeTrackerExtension::class.java)
         project.evaluationDependsOnChildren()
 
         project.afterEvaluate {
-            project.tasks.create(CHANGED_MODULES_TASK_NAME, ChangedModulesTask::class.java)
+            project.tasks.create(CHANGED_TRACKER_MODULES_TASK_NAME, ChangedModulesTask::class.java)
             configureTasks(project)
         }
     }
 
     private fun configureTasks(project: Project) {
-        val tasksNames = project.getProperty<List<String>>(CONFIG_TASKS) ?: emptyList()
+        val tasksNames = project.changeTrackerExtension.tasks
+
         tasksNames.forEach {
-            project.tasks.create("$it${CHANGED_MODULES_TASK_NAME.capitalize()}")
+            project.tasks.create("$it${CHANGED_TRACKER_MODULES_TASK_NAME.capitalize()}")
                 .apply {
-                    group = CHANGED_MODULES_TASK_NAME
-                    dependsOn(project.tasks.findByName(CHANGED_MODULES_TASK_NAME))
+                    group = CHANGED_TRACKER_GROUP_NAME
+                    dependsOn(project.tasks.findByName(CHANGED_TRACKER_MODULES_TASK_NAME))
                     finalizedBy(getTaskForSubProjects(it, project.subprojects))
                 }
         }
@@ -42,7 +40,7 @@ class ChangeTrackerPlugin : Plugin<Project> {
             subProject.tasks.findByName(taskName)?.apply {
                 onlyIf {
                     subProject.rootProject
-                        .getExtraProperty<Set<Project>>(CHANGED_MODULES_OUTPUT)
+                        .getExtraProperty<Set<Project>>(CHANGED_TRACKER_OUTPUT)
                         ?.contains(subProject)
                         ?: false
                 }

@@ -10,28 +10,17 @@ import org.gradle.api.tasks.TaskAction
 
 open class ChangedModulesTask : DefaultTask() {
 
-    companion object {
-        private const val CONFIG_WHITELIST = "changedModules_whitelist"
-        private const val CONFIG_BLACKLIST = "changedModules_blacklist"
-        private const val CONFIG_DEFAULT_BRANCH = "changedModules_defaultBranch"
+    private val whitelist by lazy { changeTrackerExtension.whitelist }
+    private val blacklist by lazy { changeTrackerExtension.blacklist }
+    private val branch by lazy { changeTrackerExtension.branch }
 
-        private const val CMD_LINE_PROPERTY_BRANCH = "branch"
-        private const val FALLBACK_BRANCH = "master"
-    }
-
-    private val whitelist by lazy { getProjectsByName(rootProject.getProperty(CONFIG_WHITELIST)) }
-    private val blacklist by lazy { getProjectsByName(rootProject.getProperty(CONFIG_BLACKLIST)) }
-    private val defaultBranch by lazy { getProperty(CONFIG_DEFAULT_BRANCH) ?: FALLBACK_BRANCH }
-    private val cmdLinePropertyBranch by lazy { getProperty<String>(CMD_LINE_PROPERTY_BRANCH) }
-
-    override fun getGroup(): String? = CHANGED_MODULES_GROUP_NAME
+    override fun getGroup(): String? = CHANGED_TRACKER_GROUP_NAME
 
     @TaskAction
     fun taskAction() {
         val projectDependents = ProjectDependents(rootProject)
         val locator = ProjectLocator(rootProject)
-        val changedFiles = JGitClient(rootProject)
-            .getChangedFiles(cmdLinePropertyBranch ?: defaultBranch)
+        val changedFiles = JGitClient(rootProject).getChangedFiles(branch)
 
         val changedProjects = changedFiles.map { locator.locateProject(it) }
 
@@ -48,13 +37,6 @@ open class ChangedModulesTask : DefaultTask() {
         result.removeAll(blacklist)
         result.addAll(whitelist)
 
-        rootProject.extensions.extraProperties.set(CHANGED_MODULES_OUTPUT, result)
+        rootProject.extensions.extraProperties.set(CHANGED_TRACKER_OUTPUT, result)
     }
-
-    private fun getProjectsByName(projectArgs: List<String>?): Set<Project> =
-        projectArgs?.let { args ->
-            rootProject.subprojects
-                .filter { args.contains(it.path) }
-                .toSet()
-        } ?: emptySet()
 }
