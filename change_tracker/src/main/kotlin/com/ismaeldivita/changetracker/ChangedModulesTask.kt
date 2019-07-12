@@ -10,8 +10,8 @@ import org.gradle.api.tasks.TaskAction
 
 open class ChangedModulesTask : DefaultTask() {
 
-    private val whitelist by lazy { changeTrackerExtension.whitelist }
-    private val blacklist by lazy { changeTrackerExtension.blacklist }
+    private val whitelist by lazy { getProjectsByName(changeTrackerExtension.whitelist) }
+    private val blacklist by lazy { getProjectsByName(changeTrackerExtension.blacklist) }
     private val branch by lazy { changeTrackerExtension.branch }
 
     override fun getGroup(): String? = CHANGED_TRACKER_GROUP_NAME
@@ -36,7 +36,13 @@ open class ChangedModulesTask : DefaultTask() {
 
         result.removeAll(blacklist)
         result.addAll(whitelist)
-
         rootProject.extensions.extraProperties.set(CHANGED_TRACKER_OUTPUT, result)
     }
+
+    private fun getProjectsByName(projectArgs: Set<String>): Set<Project> =
+        projectArgs.let { args ->
+            rootProject.subprojects
+                .filter { args.contains(it.path) }
+                .toSet()
+        }
 }
