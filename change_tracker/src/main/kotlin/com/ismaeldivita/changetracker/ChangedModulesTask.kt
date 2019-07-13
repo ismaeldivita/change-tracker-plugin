@@ -36,6 +36,8 @@ open class ChangedModulesTask : DefaultTask() {
 
         result.removeAll(blacklist)
         result.addAll(whitelist)
+
+        project.logger.quiet("Affected modules $result")
         rootProject.extensions.extraProperties.set(CHANGED_TRACKER_OUTPUT, result)
     }
 
