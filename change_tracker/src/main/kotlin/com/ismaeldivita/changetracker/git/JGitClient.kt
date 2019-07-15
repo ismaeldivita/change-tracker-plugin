@@ -3,12 +3,14 @@ package com.ismaeldivita.changetracker.git
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.diff.DiffEntry.ChangeType.*
+import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.RepositoryBuilder
 import org.eclipse.jgit.treewalk.CanonicalTreeParser
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import java.io.File
 
-class JGitClient(project: Project) {
+class JGitClient(private val project: Project) {
 
     private val oldPathChangeTypes = listOf(MODIFY, DELETE, RENAME)
     private val newPathChangeTypes = listOf(RENAME, COPY, ADD)
@@ -20,9 +22,8 @@ class JGitClient(project: Project) {
 
     private val git = Git(repo)
 
-    fun getChangedFiles(branchToCompare: String): Set<String> {
-        val branch = repo.resolve("refs/heads/$branchToCompare^{tree}")
-        val treeParser = CanonicalTreeParser(null, repo.newObjectReader(), branch)
+    fun getChangedFiles(branch: String): Set<String> {
+        val treeParser = CanonicalTreeParser(null, repo.newObjectReader(), getBranchTree(branch))
 
         val diffs = git
             .diff()
@@ -41,6 +42,11 @@ class JGitClient(project: Project) {
         }
 
         return paths
+    }
+
+    private fun getBranchTree(branch: String): ObjectId {
+        val branchTree: ObjectId? = repo.resolve("refs/heads/$branch^{tree}")
+        return branchTree ?: throw GradleException("branch $branch not found")
     }
 
     private fun DiffEntry.shouldIncludeOldPath() = oldPathChangeTypes.contains(changeType)
