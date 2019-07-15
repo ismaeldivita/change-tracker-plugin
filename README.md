@@ -1,3 +1,6 @@
+<a href="https://plugins.gradle.org/plugin/com.ismaeldivita.changetracker">
+    <img src="https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/ismaeldivita/com.ismaeldivita.changetracker/maven-metadata.xml.svg?label=Gradle%20Plugins%20Portal" />
+</a>
 # Change Tracker Plugin
 A Gradle plugin to discover the dependency graph between the modules and run specific tasks only on changed modules and his dependents.
 
@@ -19,7 +22,7 @@ Apply the plugin to your root project `build.gradle` and add the configuration b
 
 ```groovy 
 plugins {
-    id 'com.ismaeldivita.changetracker' version '0.1.0'
+    id 'com.ismaeldivita.changetracker' version '0.2.0'
 }
 
 ...
