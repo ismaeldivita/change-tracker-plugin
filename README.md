@@ -21,7 +21,7 @@ Apply the plugin to your root project `build.gradle` and add the configuration b
 
 ```groovy 
 plugins {
-    id 'com.ismaeldivita.changetracker' version '0.2.0'
+    id 'com.ismaeldivita.changetracker' version '0.3.0'
 }
 
 ...
@@ -52,6 +52,12 @@ To run your task:
 ```
 ./gradlew testChangedModules
 ```
+
+You can override the default branch used on comparison when running your command. This is useful when you're using the plugin on pull requests and each pull request may have different base branches.
+```
+./gradlew testChangedModules -Pbranch=dev
+```
+
 
 <br clear="right"/>
 
