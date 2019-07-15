@@ -12,7 +12,7 @@ open class ChangedModulesTask : DefaultTask() {
 
     private val whitelist by lazy { getProjectsByName(changeTrackerExtension.whitelist) }
     private val blacklist by lazy { getProjectsByName(changeTrackerExtension.blacklist) }
-    private val branch by lazy { changeTrackerExtension.branch }
+    private val branch by lazy { getProperty<String>("branch") ?: changeTrackerExtension.branch }
 
     override fun getGroup(): String? = CHANGED_TRACKER_GROUP_NAME
 
