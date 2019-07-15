@@ -41,6 +41,11 @@ class JGitClient(private val project: Project) {
             if (it.shouldIncludeNewPath()) paths.add(it.newPath)
         }
 
+        if (project.logger.isInfoEnabled) {
+            project.logger.info("Changed files")
+            paths.forEach { project.logger.info(it) }
+        }
+
         return paths
     }
 
