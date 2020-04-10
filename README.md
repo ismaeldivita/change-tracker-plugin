@@ -3,15 +3,14 @@
 # Change Tracker Plugin
 A Gradle plugin to discover the dependency graph between the modules and run specific tasks only on changed modules and his dependents.
 
-When we work on a multiple modules project we don't need to run our verification tasks on all modules, just on the modules impacted by the changes and his dependents, with this approach we can save a lot of time in the CI server and give faster feedback about the changes to the developers.
-
+When we're working on a modular Android project, we don't need to run our verification tasks on all modules every time you open a pull request, we can only run on the modules affected by the changes and all his dependents, with this approach we can save a lot of time on the CI giving faster feedback about the changes to the developers.
 ___
 
-<img align="right" hspace="20" width="380" src="./assets/diagram.png"/> 
+<img align="right" hspace="20" width="380" src="./assets/project_diagram.png"/>
 
-Taking this project structure as an example.
+To exemplify, take the following project structure as an example:
 
-If you apply changes on the `:core` module the verification tasks should only run on [`:featureA`, `:featureB`, `:app`]. The modules [`:database`, `:network`] can't be impacted by the changes, because they don't have any dependency on the affected modules, so they don't need to be verified.
+If you apply changes to the `:profile-service` module, you only need to run your verification tasks on `:profile-service`, `:profile`, and `:app`. It's safe to skip the verification tasks on all the other modules because they don't depend on `:profile`, and can't be affected by these changes.
 
 <br clear="right"/>
 
@@ -21,39 +20,39 @@ Apply the plugin to your root project `build.gradle` and add the configuration b
 
 ```groovy 
 plugins {
-    id 'com.ismaeldivita.changetracker' version '0.3.0'
+    id 'com.ismaeldivita.changetracker' version '0.4.0'
 }
 
 ...
 
 changeTracker {
-    tasks = ['lint','test']
+    tasks = ['lint','testDebugUnitTest']
     whitelist = [':app']
     blacklist = [':network',':featureA']
     branch = "master"
 }
 ```
 - `tasks`: List of tasks the plugin will need to create. 
-- `whitelist` (optional): List of modules that should **always** run, regardless if contains changes or not. 
-- `blacklist` (optional): List of modules that should **never** run, regardless if contains changes or not 
-- `branch`: Name of the branch that should be used to compare to the current one to extract the diff.
+- `whitelist` (optional): List of modules that should **always** run.
+- `blacklist` (optional): List of modules that should **never** run.
+- `branch`: Name of the branch that should compare to the current one to extract the diff.
 
 ## Usage
-<img align="right" hspace="20" width="200" src="./assets/tasks.png"/>
+<img align="right" hspace="15" width="270" src="./assets/tasks.png"/>
 
 The plugin will generate new tasks on the root project for each task provided on the configuration with the following pattern `${taskName}ChangedModules`.
 
 These generated tasks will run the `changedModules` task to get the list of changed modules and for each one will call the given task.
 
-Taking as an example the configuration above the plugin will generate two new tasks `lintChangedModules` and `testChangedModules`.
+Taking as an example the configuration above the plugin will generate two new tasks `lintChangedModules` and `testDebugUnitTestChangedModules`.
 
 To run your task:
 
 ```
-./gradlew testChangedModules
+./gradlew testDebugUnitTestChangedModules
 ```
 
-You can override the default branch used on comparison when running your command. This is useful when you're using the plugin on pull requests and each pull request may have different base branches.
+You can override the default branch used for the comparison when running your command. This is useful when you're using the plugin on pull requests and each pull request may have different base branches.
 ```
 ./gradlew testChangedModules -Pbranch=dev
 ```
