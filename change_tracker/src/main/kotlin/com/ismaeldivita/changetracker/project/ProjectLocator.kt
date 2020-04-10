@@ -17,7 +17,7 @@ class ProjectLocator(private val rootProject: Project) {
             rootProject
         } else {
             projects.find { (_, projectPaths) ->
-                (0 until projectPaths.size).all { projectPaths[it] == filePaths[it] }
+                (projectPaths.indices).all { projectPaths[it] == filePaths[it] }
             }?.first
         }
     }

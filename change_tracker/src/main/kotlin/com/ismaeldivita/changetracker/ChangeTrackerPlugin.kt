@@ -14,11 +14,11 @@ class ChangeTrackerPlugin : Plugin<Project> {
         }
 
         project.extensions.create(CHANGE_TRACKER_EXTENSION, ChangeTrackerExtension::class.java)
-        project.evaluationDependsOnChildren()
+        project.evaluationDependsOnChildrenRecursive()
 
         project.afterEvaluate {
-            project.tasks.create(CHANGED_TRACKER_MODULES_TASK_NAME, ChangedModulesTask::class.java)
-            configureTasks(project)
+            it.tasks.create(CHANGED_TRACKER_MODULES_TASK_NAME, ChangedModulesTask::class.java)
+            configureTasks(it)
         }
     }
 
@@ -37,13 +37,19 @@ class ChangeTrackerPlugin : Plugin<Project> {
 
     private fun getTaskForSubProjects(taskName: String, subProjects: Set<Project>): List<Task> =
         subProjects.mapNotNull { subProject ->
-            subProject.tasks.findByName(taskName)?.apply {
-                onlyIf {
-                    subProject.rootProject
-                        .getExtraProperty<Set<Project>>(CHANGED_TRACKER_OUTPUT)
-                        ?.contains(subProject)
-                        ?: false
+            val task = subProject.tasks.findByName(taskName)
+            if (task != null) {
+                task.apply {
+                    onlyIf {
+                        subProject.rootProject
+                            .getExtraProperty<Set<Project>>(CHANGED_TRACKER_OUTPUT)
+                            ?.contains(subProject)
+                            ?: false
+                    }
                 }
+            } else {
+                subProject.logger.quiet("ChangeTracker - Task [$taskName] not found for $subProject")
+                null
             }
         }
 }

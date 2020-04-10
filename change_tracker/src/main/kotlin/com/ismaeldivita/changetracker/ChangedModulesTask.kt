@@ -37,14 +37,15 @@ open class ChangedModulesTask : DefaultTask() {
         result.removeAll(blacklist)
         result.addAll(whitelist)
 
-        project.logger.quiet("Affected modules $result")
+        project.logger.quiet("Affected projects")
+        result.forEach { it.logger.quiet(it.toString()) }
+
         rootProject.extensions.extraProperties.set(CHANGED_TRACKER_OUTPUT, result)
     }
 
     private fun getProjectsByName(projectArgs: Set<String>): Set<Project> =
-        projectArgs.let { args ->
-            rootProject.subprojects
-                .filter { args.contains(it.path) }
-                .toSet()
-        }
+        rootProject
+            .subprojects
+            .filter { projectArgs.contains(it.path) }
+            .toSet()
 }
