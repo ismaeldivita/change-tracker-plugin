@@ -1,10 +1,10 @@
 plugins {
-    id "com.gradle.plugin-publish" version "0.10.1"
+    id "com.gradle.plugin-publish" version "0.11.0"
     id "kotlin"
     id 'maven-publish'
 }
 
-version = "0.3.0"
+version = "0.4.0"
 group = "com.ismaeldivita.changetracker"
 
 publishing {
