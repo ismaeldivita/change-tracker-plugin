@@ -1,10 +1,21 @@
 plugins {
     id "com.gradle.plugin-publish" version "0.10.1"
     id "kotlin"
+    id 'maven-publish'
 }
 
 version = "0.3.0"
 group = "com.ismaeldivita.changetracker"
+
+publishing {
+    publications {
+        pluginPublication (MavenPublication) {
+            from    components.java
+            groupId    project.group
+            version    project.version
+        }
+    }
+}
 
 pluginBundle {
     website = 'https://github.com/ismaeldivita/change-tracker'
