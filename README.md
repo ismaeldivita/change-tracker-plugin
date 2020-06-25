@@ -29,12 +29,14 @@ changeTracker {
     tasks = ['lint','testDebugUnitTest']
     whitelist = [':app']
     blacklist = [':network',':featureA']
+    reevaluate = [':sharedTestModule']
     branch = "master"
 }
 ```
 - `tasks`: List of tasks the plugin will need to create. 
 - `whitelist` (optional): List of modules that should **always** run.
 - `blacklist` (optional): List of modules that should **never** run.
+- `reevaluate` (optional): List of modules that will trigger the task for all modules
 - `branch`: Name of the branch that should compare to the current one to extract the diff.
 
 ## Usage
