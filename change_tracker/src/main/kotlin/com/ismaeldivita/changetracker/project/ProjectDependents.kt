@@ -18,12 +18,14 @@ class ProjectDependents(rootProject: Project) {
 
     private fun Map<Project, MutableSet<Project>>.traverseDependencies() {
         forEach { subProject, _ ->
-            subProject.configurations.forEach { config ->
-                config
-                    .dependencies
-                    .filterIsInstance<ProjectDependency>()
-                    .forEach { getValue(it.dependencyProject).add(subProject) }
-            }
+            subProject.configurations
+                .filter { !it.name.toLowerCase().contains("test") }
+                .forEach { config ->
+                    config
+                        .dependencies
+                        .filterIsInstance<ProjectDependency>()
+                        .forEach { getValue(it.dependencyProject).add(subProject) }
+                }
         }
     }
 
