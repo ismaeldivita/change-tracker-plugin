@@ -48,7 +48,7 @@ class ChangeTrackerPlugin : Plugin<Project> {
                     }
                 }
             } else {
-                subProject.logger.quiet("ChangeTracker - Task [$taskName] not found for $subProject")
+                subProject.logger.info("ChangeTracker - Task [$taskName] not found for $subProject")
                 null
             }
         }

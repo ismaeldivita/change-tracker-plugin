@@ -10,7 +10,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import java.io.File
 
-class JGitClient(private val project: Project) {
+class JGitClient(project: Project) {
 
     private val oldPathChangeTypes = listOf(MODIFY, DELETE, RENAME)
     private val newPathChangeTypes = listOf(RENAME, COPY, ADD)
@@ -41,11 +41,6 @@ class JGitClient(private val project: Project) {
             if (it.shouldIncludeNewPath()) paths.add(it.newPath)
         }
 
-        if (project.logger.isInfoEnabled) {
-            project.logger.info("Changed files")
-            paths.forEach { project.logger.info(it) }
-        }
-
         return paths
     }
 
@@ -57,5 +52,4 @@ class JGitClient(private val project: Project) {
     private fun DiffEntry.shouldIncludeOldPath() = oldPathChangeTypes.contains(changeType)
 
     private fun DiffEntry.shouldIncludeNewPath() = newPathChangeTypes.contains(changeType)
-
 }

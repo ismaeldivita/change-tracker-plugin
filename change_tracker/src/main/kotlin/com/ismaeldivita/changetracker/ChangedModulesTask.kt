@@ -22,7 +22,6 @@ open class ChangedModulesTask : DefaultTask() {
         val projectDependents = ProjectDependents(rootProject)
         val locator = ProjectLocator(rootProject)
         val changedFiles = JGitClient(rootProject).getChangedFiles(branch)
-
         val changedProjects = changedFiles.map { locator.locateProject(it) }
 
         val result: MutableSet<Project> = when {
@@ -39,10 +38,34 @@ open class ChangedModulesTask : DefaultTask() {
         result.removeAll(blacklist)
         result.addAll(whitelist)
 
-        project.logger.quiet("Affected projects")
-        result.forEach { it.logger.quiet(it.toString()) }
+        log(changedFiles, changedProjects, result)
 
         rootProject.extensions.extraProperties.set(CHANGED_TRACKER_OUTPUT, result)
+    }
+
+    private fun log(
+        changedFiles: Set<String>,
+        changedProjects: List<Project?>,
+        result: MutableSet<Project>
+    ) {
+        if (logger.isInfoEnabled) {
+            if (changedFiles.isEmpty()) {
+                logger.info("\nNo Changed Files")
+            } else {
+                logger.info("\nChanged Files")
+                changedFiles.forEach { logger.info("- $it") }
+
+                logger.info("\nChanged Projects")
+                changedProjects.forEach { logger.info("- $it") }
+            }
+        }
+
+        if (result.isEmpty()) {
+            project.logger.quiet("\nNo Affected Projects")
+        } else {
+            project.logger.quiet("\nAffected Projects")
+            result.forEach { it.logger.quiet("- $it") }
+        }
     }
 
     private fun getProjectsByName(projectArgs: Set<String>): Set<Project> =
