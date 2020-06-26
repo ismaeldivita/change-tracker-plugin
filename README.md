@@ -20,7 +20,7 @@ Apply the plugin to your root project `build.gradle` and add the configuration b
 
 ```groovy 
 plugins {
-    id 'com.ismaeldivita.changetracker' version '0.4.0'
+    id 'com.ismaeldivita.changetracker' version '0.5.0'
 }
 
 ...
@@ -29,15 +29,15 @@ changeTracker {
     tasks = ['lint','testDebugUnitTest']
     whitelist = [':app']
     blacklist = [':network',':featureA']
+    reevaluate = [':sharedTest']
     branch = "master"
 }
 ```
-<!--- Add this above (comment does not work): reevaluate = [':sharedTest'] --->
 
 - `tasks`: List of tasks the plugin will need to create. 
 - `whitelist` (optional): List of modules that should **always** run.
 - `blacklist` (optional): List of modules that should **never** run.
-<!--- - `reevaluate` (optional): List of modules that will trigger the task for all modules --->
+- `reevaluate` (optional): List of modules that will trigger the task for all modules
 - `branch`: Name of the branch that should compare to the current one to extract the diff.
 
 ## Usage
@@ -57,33 +57,15 @@ To run your task:
 
 You can override the default branch used for the comparison when running your command. This is useful when you're using the plugin on pull requests and each pull request may have different base branches.
 ```
-./gradlew testChangedModules -Pbranch=dev
+./gradlew testDebugUnitTestChangedModules -Pbranch=dev
 ```
-
-<!---
-## Cyclic Test Dependencies
-In modular Android projects often testing code exists, which is shared between modules. 
-In such cases, the testing code resides in a module and is used by others modules using
-`testImplementation project(path: ":sharedTest")`. 
-This could lead to cyclic dependencies if the `:sharedTest` depends on another module which uses the `:sharedTest` for tests itself.
-Let's create an example with 2 modules:
-- `:database`: A module which contains code to handle the app's database. Its test requires shared testing code and thus is configured to depend on
-the `:sharedTest` using `testImplementation(project(:sharedTest))`
-- `sharedTest`: Our module with shared test code. As it provides mocks for database testing it depends on `:database`.
-So it has a dependency on `:database` with `implementation(project(:database))`
-
-In this particular example, we created a cyclic dependency if the configuration (`testImplementation`, `androidTestImplementation`, ...) is not considered.
-Because of this, test configurations are not part of the dependency evaluation. 
-However, if you apply changes to `:sharedTest`, `:database` needs to be verified as well. 
-In this case, specify the `:sharedTest` module in the `reevaluate` list to trigger your verification tasks for all modules. 
---->
 
 <br clear="right"/>
 
-> **Notes**
->- This plugin assumes you use GIT as your VCS.
->- Any changes to the root project or `buildSrc` will trigger the task for all modules.
-
+## Notes
+- This plugin assumes you use GIT as your VCS.
+- Any changes to the root project or `buildSrc` will trigger the task for all modules.
+- Test configurations will not be tracked since dependency cycles could be created for test purposes, which is not supported by this plugin. If you have a shared test library project and want to trigger the tasks on his dependents check the `reevaluate` configuration.
 
 ## License
 MIT License
