@@ -12,6 +12,7 @@ open class ChangedModulesTask : DefaultTask() {
 
     private val whitelist by lazy { getProjectsByName(changeTrackerExtension.whitelist) }
     private val blacklist by lazy { getProjectsByName(changeTrackerExtension.blacklist) }
+    private val reevaluate by lazy { getProjectsByName(changeTrackerExtension.reevaluate) }
     private val branch by lazy { getProperty<String>("branch") ?: changeTrackerExtension.branch }
 
     override fun getGroup(): String? = CHANGED_TRACKER_GROUP_NAME
@@ -26,6 +27,7 @@ open class ChangedModulesTask : DefaultTask() {
 
         val result: MutableSet<Project> = when {
             changedProjects.contains(rootProject) -> rootProject.subprojects
+            reevaluate.any(changedProjects::contains) -> rootProject.subprojects
             changedProjects.contains(null) -> rootProject.subprojects
             else -> changedProjects
                 .filterNotNull()

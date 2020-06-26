@@ -32,9 +32,12 @@ changeTracker {
     branch = "master"
 }
 ```
+<!--- Add this above (comment does not work): reevaluate = [':sharedTest'] --->
+
 - `tasks`: List of tasks the plugin will need to create. 
 - `whitelist` (optional): List of modules that should **always** run.
 - `blacklist` (optional): List of modules that should **never** run.
+<!--- - `reevaluate` (optional): List of modules that will trigger the task for all modules --->
 - `branch`: Name of the branch that should compare to the current one to extract the diff.
 
 ## Usage
@@ -57,6 +60,23 @@ You can override the default branch used for the comparison when running your co
 ./gradlew testChangedModules -Pbranch=dev
 ```
 
+<!---
+## Cyclic Test Dependencies
+In modular Android projects often testing code exists, which is shared between modules. 
+In such cases, the testing code resides in a module and is used by others modules using
+`testImplementation project(path: ":sharedTest")`. 
+This could lead to cyclic dependencies if the `:sharedTest` depends on another module which uses the `:sharedTest` for tests itself.
+Let's create an example with 2 modules:
+- `:database`: A module which contains code to handle the app's database. Its test requires shared testing code and thus is configured to depend on
+the `:sharedTest` using `testImplementation(project(:sharedTest))`
+- `sharedTest`: Our module with shared test code. As it provides mocks for database testing it depends on `:database`.
+So it has a dependency on `:database` with `implementation(project(:database))`
+
+In this particular example, we created a cyclic dependency if the configuration (`testImplementation`, `androidTestImplementation`, ...) is not considered.
+Because of this, test configurations are not part of the dependency evaluation. 
+However, if you apply changes to `:sharedTest`, `:database` needs to be verified as well. 
+In this case, specify the `:sharedTest` module in the `reevaluate` list to trigger your verification tasks for all modules. 
+--->
 
 <br clear="right"/>
 
