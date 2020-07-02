@@ -44,7 +44,7 @@ class ChangeTrackerPlugin : Plugin<Project> {
                         subProject.rootProject
                             .getExtraProperty<Set<Project>>(CHANGED_TRACKER_OUTPUT)
                             ?.contains(subProject)
-                            ?: false
+                            ?: true
                     }
                 }
             } else {
