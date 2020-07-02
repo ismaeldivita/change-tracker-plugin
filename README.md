@@ -20,7 +20,7 @@ Apply the plugin to your root project `build.gradle` and add the configuration b
 
 ```groovy 
 plugins {
-    id 'com.ismaeldivita.changetracker' version '0.5.0'
+    id 'com.ismaeldivita.changetracker' version '0.5.1'
 }
 
 ...
