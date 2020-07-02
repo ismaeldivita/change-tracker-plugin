@@ -22,7 +22,7 @@ open class ChangedModulesTask : DefaultTask() {
         val projectDependents = ProjectDependents(rootProject)
         val locator = ProjectLocator(rootProject)
         val changedFiles = JGitClient(rootProject).getChangedFiles(branch)
-        val changedProjects = changedFiles.map { locator.locateProject(it) }
+        val changedProjects = changedFiles.map { locator.locateProject(it) }.toSet()
 
         val result: MutableSet<Project> = when {
             changedProjects.contains(rootProject) -> rootProject.subprojects
@@ -45,7 +45,7 @@ open class ChangedModulesTask : DefaultTask() {
 
     private fun log(
         changedFiles: Set<String>,
-        changedProjects: List<Project?>,
+        changedProjects: Set<Project?>,
         result: MutableSet<Project>
     ) {
         if (logger.isInfoEnabled) {
