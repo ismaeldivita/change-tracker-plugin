@@ -20,7 +20,7 @@ Apply the plugin to your root project `build.gradle` and add the configuration b
 
 ```groovy 
 plugins {
-    id 'com.ismaeldivita.changetracker' version '0.5.2'
+    id 'com.ismaeldivita.changetracker' version '0.6.0'
 }
 
 ...
@@ -34,11 +34,12 @@ changeTracker {
 }
 ```
 
-- `tasks`: List of tasks the plugin will need to create. 
+- `tasks`: List of tasks the plugin will need to create.
+- `branch`: Name of the branch that should compare to the current one to extract the diff.
 - `whitelist` (optional): List of modules that should **always** run.
 - `blacklist` (optional): List of modules that should **never** run.
 - `reevaluate` (optional): List of modules that will trigger the task for all modules
-- `branch`: Name of the branch that should compare to the current one to extract the diff.
+- `remote` (optional): Name of the remote repository.
 
 ## Usage
 <img align="right" hspace="15" width="270" src="./assets/tasks.png"/>
