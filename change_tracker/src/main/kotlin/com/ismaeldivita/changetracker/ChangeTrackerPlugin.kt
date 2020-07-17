@@ -1,12 +1,6 @@
 package com.ismaeldivita.changetracker
 
-import com.ismaeldivita.changetracker.util.isRoot
-import com.ismaeldivita.changetracker.util.changeTrackerExtension
-import com.ismaeldivita.changetracker.util.CHANGED_TRACKER_GROUP_NAME
-import com.ismaeldivita.changetracker.util.CHANGE_TRACKER_EXTENSION
-import com.ismaeldivita.changetracker.util.CHANGED_TRACKER_MODULES_TASK_NAME
-import com.ismaeldivita.changetracker.util.CHANGED_TRACKER_OUTPUT
-import com.ismaeldivita.changetracker.util.getExtraProperty
+import com.ismaeldivita.changetracker.util.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -20,6 +14,7 @@ class ChangeTrackerPlugin : Plugin<Project> {
         }
 
         project.extensions.create(CHANGE_TRACKER_EXTENSION, ChangeTrackerExtension::class.java)
+        project.evaluationDependsOnChildrenRecursive()
 
         project.afterEvaluate {
             it.tasks.create(CHANGED_TRACKER_MODULES_TASK_NAME, ChangedModulesTask::class.java)
