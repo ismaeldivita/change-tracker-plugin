@@ -15,6 +15,7 @@ open class ChangedModulesTask : DefaultTask() {
     private val reevaluate by lazy { getProjectsByName(changeTrackerExtension.reevaluate) }
     private val branch by lazy { getProperty<String>("branch") ?: changeTrackerExtension.branch }
     private val remote by lazy { getProperty<String>("remote") ?: changeTrackerExtension.remote }
+    private val useMergeBranchDiff by lazy { changeTrackerExtension.useMergeBaseDiff }
 
     override fun getGroup(): String? = CHANGED_TRACKER_GROUP_NAME
 
@@ -22,7 +23,11 @@ open class ChangedModulesTask : DefaultTask() {
     fun taskAction() {
         val projectDependents = ProjectDependents(rootProject)
         val locator = ProjectLocator(rootProject)
-        val changedFiles = JGitClient(rootProject).getChangedFiles(branch, remote)
+        val changedFiles = JGitClient(rootProject).getChangedFiles(
+            branch = branch,
+            remote = remote,
+            useMergeBaseDiff = useMergeBranchDiff
+        )
         val changedProjects = changedFiles.map { locator.locateProject(it) }.toSet()
 
         val result: MutableSet<Project> = when {

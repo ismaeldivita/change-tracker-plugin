@@ -9,13 +9,18 @@ import org.eclipse.jgit.diff.DiffEntry.ChangeType.RENAME
 import org.eclipse.jgit.diff.DiffEntry.ChangeType.COPY
 import org.eclipse.jgit.lib.Constants.R_REMOTES
 import org.eclipse.jgit.lib.Constants.TYPE_TREE
-import org.eclipse.jgit.lib.ObjectId
+import org.eclipse.jgit.lib.Constants.HEAD
 import org.eclipse.jgit.lib.RepositoryBuilder
+import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.revwalk.RevWalk
+import org.eclipse.jgit.revwalk.filter.RevFilter
+import org.eclipse.jgit.treewalk.AbstractTreeIterator
 import org.eclipse.jgit.treewalk.CanonicalTreeParser
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.eclipse.jgit.lib.Constants.R_HEADS
 import java.io.File
+import java.lang.Exception
 
 class JGitClient(project: Project) {
 
@@ -29,16 +34,12 @@ class JGitClient(project: Project) {
 
     private val git = Git(repo)
 
-    fun getChangedFiles(branch: String, remote: String?): Set<String> {
-        val treeParser = CanonicalTreeParser(
-            null,
-            repo.newObjectReader(),
-            getBranchTree(branch, remote)
-        )
+    fun getChangedFiles(branch: String, remote: String?, useMergeBaseDiff: Boolean): Set<String> {
+        val oldTree = getOldTree(branch, remote, useMergeBaseDiff)
 
         val diffs = git
             .diff()
-            .setOldTree(treeParser)
+            .setOldTree(oldTree)
             .call()
 
         return mapPathFromDiffEntries(diffs)
@@ -55,14 +56,35 @@ class JGitClient(project: Project) {
         return paths
     }
 
-    private fun getBranchTree(branch: String, remote: String?): ObjectId {
+    private fun getOldTree(
+        branch: String,
+        remote: String?,
+        useMergeBaseDiff: Boolean
+    ): AbstractTreeIterator = try {
+        val reader = repo.newObjectReader()
+        val rw = RevWalk(repo)
+
         val reference = if (remote.isNullOrBlank()) {
-            "$R_HEADS$branch^{$TYPE_TREE}"
+            "$R_HEADS$branch"
         } else {
-            "$R_REMOTES$remote/$branch^{$TYPE_TREE}"
+            "$R_REMOTES$remote/$branch"
         }
 
-        return repo.resolve(reference) ?: throw GradleException("branch $remote $branch not found")
+        if (useMergeBaseDiff) {
+            val commitA: RevCommit = rw.parseCommit(repo.resolve(reference))
+            val commitB: RevCommit = rw.parseCommit(repo.resolve(HEAD))
+
+            rw.markStart(commitA)
+            rw.markStart(commitB)
+            rw.revFilter = RevFilter.MERGE_BASE
+            val base = rw.next()
+            CanonicalTreeParser().apply { reset(reader, base.tree) }
+        } else {
+            val objId = repo.resolve("$reference^{$TYPE_TREE}")
+            CanonicalTreeParser(null, reader, objId)
+        }
+    } catch (error: Exception) {
+        throw GradleException("Branch ${remote.orEmpty()} $branch not found")
     }
 
     private fun DiffEntry.shouldIncludeOldPath() = oldPathChangeTypes.contains(changeType)

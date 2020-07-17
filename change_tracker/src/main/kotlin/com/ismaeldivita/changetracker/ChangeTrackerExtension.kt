@@ -10,4 +10,5 @@ open class ChangeTrackerExtension : Serializable {
     var reevaluate: Set<String> = emptySet<String>()
     var branch: String = "master"
     var remote: String? = null
+    var useMergeBaseDiff: Boolean = true
 }
