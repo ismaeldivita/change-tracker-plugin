@@ -1,6 +1,12 @@
 package com.ismaeldivita.changetracker
 
-import com.ismaeldivita.changetracker.util.*
+import com.ismaeldivita.changetracker.util.CHANGED_TRACKER_GROUP_NAME
+import com.ismaeldivita.changetracker.util.isRoot
+import com.ismaeldivita.changetracker.util.CHANGE_TRACKER_EXTENSION
+import com.ismaeldivita.changetracker.util.CHANGED_TRACKER_MODULES_TASK_NAME
+import com.ismaeldivita.changetracker.util.CHANGED_TRACKER_OUTPUT
+import com.ismaeldivita.changetracker.util.changeTrackerExtension
+import com.ismaeldivita.changetracker.util.getExtraProperty
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -14,7 +20,6 @@ class ChangeTrackerPlugin : Plugin<Project> {
         }
 
         project.extensions.create(CHANGE_TRACKER_EXTENSION, ChangeTrackerExtension::class.java)
-        project.evaluationDependsOnChildrenRecursive()
 
         project.afterEvaluate {
             it.tasks.create(CHANGED_TRACKER_MODULES_TASK_NAME, ChangedModulesTask::class.java)
@@ -26,12 +31,11 @@ class ChangeTrackerPlugin : Plugin<Project> {
         val tasksNames = project.changeTrackerExtension.tasks
 
         tasksNames.forEach {
-            project.tasks.create("$it${CHANGED_TRACKER_MODULES_TASK_NAME.capitalize()}")
-                .apply {
-                    group = CHANGED_TRACKER_GROUP_NAME
-                    dependsOn(project.tasks.findByName(CHANGED_TRACKER_MODULES_TASK_NAME))
-                    finalizedBy(getTaskForSubProjects(it, project.subprojects))
-                }
+            project.tasks.register("$it${CHANGED_TRACKER_MODULES_TASK_NAME.capitalize()}") { task ->
+                task.group = CHANGED_TRACKER_GROUP_NAME
+                task.dependsOn(project.tasks.findByName(CHANGED_TRACKER_MODULES_TASK_NAME))
+                task.finalizedBy(getTaskForSubProjects(it, project.subprojects))
+            }
         }
     }
 

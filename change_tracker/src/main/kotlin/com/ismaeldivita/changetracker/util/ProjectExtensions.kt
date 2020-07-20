@@ -15,8 +15,3 @@ fun <T> Project.getExtraProperty(key: String): T? = try {
 
 val Project.changeTrackerExtension: ChangeTrackerExtension
     get() = extensions.getByName(CHANGE_TRACKER_EXTENSION) as ChangeTrackerExtension
-
-fun Project.evaluationDependsOnChildrenRecursive() {
-    subprojects.forEach { it.evaluationDependsOnChildrenRecursive() }
-    evaluationDependsOnChildren()
-}
