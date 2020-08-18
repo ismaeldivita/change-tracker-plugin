@@ -8,7 +8,12 @@ class ProjectLocator(private val rootProject: Project) {
     private val projects = rootProject
         .subprojects
         .sortedByDescending { it.depth }
-        .map { it to it.path.split(":").drop(1) }
+        .map { subproject ->
+            val relativePath = subproject.projectDir.path.removePrefix(subproject.rootDir.path)
+            val paths = relativePath.split(File.separatorChar).drop(1)
+
+            subproject to paths
+        }
 
     fun locateProject(filePath: String): Project? {
         val filePaths = filePath.split(File.separatorChar)
@@ -21,5 +26,4 @@ class ProjectLocator(private val rootProject: Project) {
             }?.first
         }
     }
-
 }
