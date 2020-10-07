@@ -3,7 +3,7 @@
 # Change Tracker Plugin
 A Gradle plugin to discover the dependency graph between the modules and run specific tasks only on changed modules and his dependents.
 
-When we're working on a modular Android project, we don't need to run our verification tasks on all modules every time you open a pull request, we can only run on the modules affected by the changes and all his dependents, with this approach we can save a lot of time on the CI giving faster feedback about the changes to the developers.
+When we're working on a modular project, we don't need to run our verification tasks on all modules every time you open a pull request, we can only run on the modules affected by the changes and all his dependents, with this approach we can save a lot of time on the CI giving faster feedback about the changes to the developers.
 ___
 
 <img align="right" hspace="20" width="380" src="./assets/project_diagram.png"/>
