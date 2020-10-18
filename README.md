@@ -10,7 +10,7 @@ ___
 
 To exemplify, take the following project structure as an example:
 
-If you apply changes to the `:profile-service` module, you only need to run your verification tasks on `:profile-service`, `:profile`, and `:app`. It's safe to skip the verification tasks on all the other modules because they don't depend on `:profile`, and can't be affected by these changes.
+If you apply changes to the `:profile-service` module, you only need to run your verification tasks on `:profile-service`, `:profile`, and `:app`. It's safe to skip the verification tasks on all the other modules because they don't depend on `:profile-service`, and can't be affected by these changes.
 
 <br clear="right"/>
 
