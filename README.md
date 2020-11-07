@@ -31,6 +31,7 @@ changeTracker {
     blacklist = [':network',':featureA']
     reevaluate = [':sharedTest']
     branch = "master"
+    remote = "origin"
 }
 ```
 
