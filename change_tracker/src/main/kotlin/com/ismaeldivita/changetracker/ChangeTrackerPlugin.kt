@@ -32,8 +32,8 @@ class ChangeTrackerPlugin : Plugin<Project> {
         val rules = TaskRuleParser.parse(project, project.changeTrackerExtension.taskRules)
 
         rules.forEach { rule ->
-            val taskName =
-                rule.alias ?: "${rule.task}${CHANGED_TRACKER_MODULES_TASK_NAME.capitalize()}"
+            val taskName = rule.alias
+                ?: "${rule.task}${CHANGED_TRACKER_MODULES_TASK_NAME.capitalize()}"
 
             project.tasks.register(taskName) { task ->
                 task.group = CHANGED_TRACKER_GROUP_NAME
