@@ -9,10 +9,10 @@ group = "com.ismaeldivita.changetracker"
 
 publishing {
     publications {
-        pluginPublication (MavenPublication) {
-            from    components.java
-            groupId    project.group
-            version    project.version
+        pluginPublication(MavenPublication) {
+            from components.java
+            groupId project.group
+            version project.version
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.ismaeldivita.changetracker.project
+package com.ismaeldivita.changetracker.helper
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
