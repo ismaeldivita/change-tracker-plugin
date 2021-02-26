@@ -1,5 +1,3 @@
-[ ![Download](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/ismaeldivita/changetracker/com.ismaeldivita.changetracker.gradle.plugin/maven-metadata.xml.svg?label=Gradle%20Plugins%20Portal) ](https://plugins.gradle.org/plugin/com.ismaeldivita.changetracker)
-
 # Change Tracker Plugin
 A Gradle plugin to discover the dependency graph between the modules and run specific tasks only on changed modules and his dependents.
 
@@ -43,7 +41,6 @@ changeTracker {
 - `remote` (optional): Name of the remote repository.
 
 ## Usage
-<img align="right" hspace="15" width="270" src="./assets/tasks.png"/>
 
 The plugin will generate new tasks on the root project for each task provided on the configuration with the following pattern `${taskName}ChangedModules`.
 
@@ -61,8 +58,6 @@ You can override the default branch used for the comparison when running your co
 ```
 ./gradlew testDebugUnitTestChangedModules -Pbranch=dev
 ```
-
-<br clear="right"/>
 
 ## Notes
 - This plugin assumes you use GIT as your VCS.

@@ -4,15 +4,15 @@ plugins {
     id 'maven-publish'
 }
 
-version = "0.7.3"
+version = "0.8.2"
 group = "com.ismaeldivita.changetracker"
 
 publishing {
     publications {
-        pluginPublication (MavenPublication) {
-            from    components.java
-            groupId    project.group
-            version    project.version
+        pluginPublication(MavenPublication) {
+            from components.java
+            groupId project.group
+            version project.version
         }
     }
 }

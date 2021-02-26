@@ -10,4 +10,4 @@ val Task.changeTrackerExtension: ChangeTrackerExtension
     get() = project.changeTrackerExtension
 
 @Suppress("UNCHECKED_CAST")
-fun <T> Task.getProperty(key: String): T? = project.properties[key] as T?
+fun  Task.getProperty(key: String): String? = project.properties[key] as? String
