@@ -1,5 +1,3 @@
-[ ![Download](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/ismaeldivita/changetracker/com.ismaeldivita.changetracker.gradle.plugin/maven-metadata.xml.svg?label=Gradle%20Plugins%20Portal) ](https://plugins.gradle.org/plugin/com.ismaeldivita.changetracker)
-
 # Change Tracker Plugin
 A Gradle plugin to discover the dependency graph between the modules and run specific tasks only on changed modules and his dependents.
 
