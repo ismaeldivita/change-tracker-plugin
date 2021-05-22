@@ -17,8 +17,6 @@ open class ChangedModulesTask : DefaultTask() {
     private val remote by lazy { getProperty<String>("remote") ?: changeTrackerExtension.remote }
     private val useMergeBranchDiff by lazy { changeTrackerExtension.useMergeBaseDiff }
 
-    override fun getGroup(): String? = CHANGED_TRACKER_GROUP_NAME
-
     @TaskAction
     fun taskAction() {
         val projectDependents = ProjectDependents(rootProject)

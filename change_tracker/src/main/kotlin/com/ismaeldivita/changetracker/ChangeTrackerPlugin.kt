@@ -22,8 +22,13 @@ class ChangeTrackerPlugin : Plugin<Project> {
         project.extensions.create(CHANGE_TRACKER_EXTENSION, ChangeTrackerExtension::class.java)
 
         project.afterEvaluate {
-            it.tasks.create(CHANGED_TRACKER_MODULES_TASK_NAME, ChangedModulesTask::class.java)
-            configureTasks(it)
+            project.tasks.create(
+                CHANGED_TRACKER_MODULES_TASK_NAME,
+                ChangedModulesTask::class.java
+            ) { task ->
+                task.group = CHANGED_TRACKER_GROUP_NAME
+            }
+            configureTasks(project)
         }
     }
 
