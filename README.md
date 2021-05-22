@@ -1,27 +1,31 @@
 # Change Tracker Plugin
-A Gradle plugin to discover the dependency graph between the modules and run specific tasks only on changed modules and his dependents.
 
-When we're working on a modular project, we don't need to run our verification tasks on all modules every time you open a pull request, we can only run on the modules affected by the changes and all his dependents, with this approach we can save a lot of time on the CI giving faster feedback about the changes to the developers.
+A Gradle plugin to help analyse the dependency between modules and run tasks only on modules impacted by specific set of changes.
+
+The idea behind this plugin is to optimize running verification tasks on large modularized projects. There is no need to run these tasks on all modules every time we apply a change. Instead, we could run them only on modules affected by the changes and their dependents.
+
 ___
 
-<img align="right" hspace="20" width="380" src="./assets/project_diagram.png"/>
+Take the following project structure as an example:
 
-To exemplify, take the following project structure as an example:
+<br>
+<p align="center">
+<img width="450" src="./assets/project.png"/>
+</p>
+<br>
 
-If you apply changes to the `:profile-service` module, you only need to run your verification tasks on `:profile-service`, `:profile`, and `:app`. It's safe to skip the verification tasks on all the other modules because they don't depend on `:profile-service`, and can't be affected by these changes.
+If you apply changes to the `:profile-service` module, you only need to run your verification tasks on `:profile-service`, `:profile-feature`, and `:app`. It's safe to skip the tasks on all the other modules since they don't depend on `:profile-service` and can't be affected by these changes.
 
-<br clear="right"/>
+## Setup
 
-## Installation
-
-Apply the plugin to your root project `build.gradle` and add the configuration block.
+Apply the plugin and the configuration to your root project `build.gradle`
 
 ```groovy 
 plugins {
     id 'com.ismaeldivita.changetracker' version '0.7.4'
 }
 
-...
+// ...
 
 changeTracker {
     tasks = ['lint','testDebugUnitTest']
@@ -33,19 +37,16 @@ changeTracker {
 }
 ```
 
-- `tasks`: List of tasks the plugin will need to create.
-- `branch`: Name of the branch that should compare to the current one to extract the diff.
+- `tasks`: List of the tasks the plugin will need to create.
+- `branch`: Name of the branch that should be used to extract the diff.
 - `whitelist` (optional): List of modules that should **always** run.
 - `blacklist` (optional): List of modules that should **never** run.
 - `reevaluate` (optional): List of modules that will trigger the task for all modules
 - `remote` (optional): Name of the remote repository.
 
 ## Usage
-<img align="right" hspace="15" width="270" src="./assets/tasks.png"/>
 
-The plugin will generate new tasks on the root project for each task provided on the configuration with the following pattern `${taskName}ChangedModules`.
-
-These generated tasks will run the `changedModules` task to get the list of changed modules and for each one will call the given task.
+The plugin will generate new tasks on the root project for each task provided on the configuration with the following name `${taskName}ChangedModules`.
 
 Taking as an example the configuration above the plugin will generate two new tasks `lintChangedModules` and `testDebugUnitTestChangedModules`.
 
@@ -60,12 +61,10 @@ You can override the default branch used for the comparison when running your co
 ./gradlew testDebugUnitTestChangedModules -Pbranch=dev
 ```
 
-<br clear="right"/>
-
 ## Notes
-- This plugin assumes you use GIT as your VCS.
+- This plugin will assume you use GIT as your VCS.
 - Any changes to the root project or `buildSrc` will trigger the task for all modules.
-- Test configurations will not be tracked since dependency cycles could be created for test purposes, which is not supported by this plugin. If you have a shared test library project and want to trigger the tasks on his dependents check the `reevaluate` configuration.
+- Test configurations will not be tracked since dependency cycles could be created for test purposes and this is not supported by this plugin. If you have a shared test library project and want to trigger the tasks on their dependents check the `reevaluate` configuration.
 
 ## License
 MIT License
