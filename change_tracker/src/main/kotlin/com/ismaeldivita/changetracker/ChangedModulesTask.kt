@@ -8,8 +8,6 @@ import org.gradle.api.tasks.TaskAction
 
 open class ChangedModulesTask : DefaultTask() {
 
-    override fun getGroup(): String? = CHANGED_TRACKER_GROUP_NAME
-
     @TaskAction
     fun taskAction() {
         val branch = getProperty("branch") ?: changeTrackerExtension.branch
