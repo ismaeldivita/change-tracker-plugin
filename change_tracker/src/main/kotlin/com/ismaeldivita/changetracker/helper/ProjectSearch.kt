@@ -3,9 +3,9 @@ package com.ismaeldivita.changetracker.helper
 import org.gradle.api.Project
 import java.io.File
 
-class ProjectLocator(private val rootProject: Project) {
+class ProjectSearch(private val rootProject: Project) {
 
-    private val projects = rootProject
+    private val projectByPaths: List<Pair<Project, List<String>>> = rootProject
         .subprojects
         .sortedByDescending { it.depth }
         .map { subproject ->
@@ -15,13 +15,13 @@ class ProjectLocator(private val rootProject: Project) {
             subproject to paths
         }
 
-    fun locateProject(filePath: String): Project? {
+    fun search(filePath: String): Project? {
         val filePaths = filePath.split(File.separatorChar)
 
         return if (filePaths.size == 1) {
             rootProject
         } else {
-            projects.find { (_, projectPaths) ->
+            projectByPaths.find { (_, projectPaths) ->
                 (projectPaths.indices).all { projectPaths[it] == filePaths[it] }
             }?.first
         }
