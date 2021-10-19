@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="1.7">
+      <module name="Application.app" target="11" />
+      <module name="Application.inbox-feature" target="11" />
+      <module name="Application.profile-feature" target="11" />
+      <module name="Plugin_Application_Test.app" target="11" />
+      <module name="Plugin_Application_Test.inbox-feature" target="11" />
+      <module name="Plugin_Application_Test.profile-feature" target="11" />
+      <module name="sample.app" target="11" />
+      <module name="sample.inbox-feature" target="11" />
+      <module name="sample.profile-feature" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
