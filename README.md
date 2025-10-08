@@ -1,3 +1,8 @@
+# Notice
+This project is no longer maintained and the repository is now archived.
+
+Please migrate to other solutions, such as https://github.com/dropbox/AffectedModuleDetector.
+
 # Change Tracker Plugin
 
 A Gradle plugin to help analyse the dependency between modules and run tasks only on modules impacted by specific set of changes.
